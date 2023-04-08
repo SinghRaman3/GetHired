@@ -1,11 +1,9 @@
 import User from "../models/user.js"
 import bcrypt from "bcryptjs"
+import { createError } from "../utils/createError.js";
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
     try {
-        if (await User.findOne(req.body.userName)) throw new createError("Username not available");
-        if(await User.findOne(req.body.email)) res.json("This email is already registered")
-
         var salt = bcrypt.genSaltSync(10);
         var hash = bcrypt.hashSync(req.body.password, salt);
 
@@ -15,13 +13,16 @@ export const signup = async (req, res) => {
             password: hash
         });
 
-        // if(await newUser.findOne(userName)) res.json("Username not available")
-        // if(await newUser.findOne(email)) res.json("This email is already registered")
-
         await newUser.save()
         res.json("User created successfully")
     } catch (error) {
-        res.json(error);
+        next(error);
     }
 }
-export const signin = () => {} 
+export const signin = async(req, res, next) => {
+    try {
+        
+    } catch (error) {
+        next(error)
+    }
+} 
