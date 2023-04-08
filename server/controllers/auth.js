@@ -21,8 +21,17 @@ export const signup = async (req, res, next) => {
 }
 export const signin = async(req, res, next) => {
     try {
-        
+        const user = await User.findOne({userName : req.body.userName})
+
+        if(!user) return next(createError(401, "Please login with valid credentials"))
+
+        const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
+
+        if(!isPasswordCorrect) return res.status(401).json("Incorrect password")
+
+        res.json("Logged in successfully")
     } catch (error) {
         next(error)
     }
 } 
+
